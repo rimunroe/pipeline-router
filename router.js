@@ -30,7 +30,7 @@ function Router(){
     var routes = [route];
     var i;
 
-    for(i = 0; i < arguments.length; i++){
+    for(i = 1; i < arguments.length; i++){
       var childRoutesBundle = arguments[i];
 
       var j;
