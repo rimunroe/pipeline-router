@@ -128,7 +128,7 @@ function Router() {
       params[_param.name] = segments[_param.position];
     }
 
-    route.callback.call(null, path, params);
+    route.callback.call(null, route.name, params, path);
   }
 
   this.makeRouteIntoPath = function(page, params){
