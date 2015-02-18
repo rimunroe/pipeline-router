@@ -58,6 +58,40 @@ function Router() {
       _fillOutChildPaths(this, '');
     }
   }
+
+  function matchSegments(segments, route, depth){
+    var matches = [];
+    if (route.pattern.test(segments[0])) {
+      matches.push({
+        route: route,
+        depth: depth
+      });
+    }
+    route.children.forEach(function(child){
+      if (child.pattern.test(segments.slice(1, segments.length))) {
+        var childMatches = matchSegments(segments.slice(1, segments.length), child, depth + 1);
+        childMatches.forEach(function(match){
+          matches.push(match);
+        })
+      }
+    });
+
+    return matches;
+  }
+
+  this.matchRoute = function(path){
+    var segments = path.split('/');
+    segments[0] = '/';
+    var matches = matchSegments(segments, this._routes['/'], 0);
+    var bestMatch = {
+      route: this._routes['/'],
+      depth: 0
+    };
+    matches.forEach(function(match){
+      if (match.depth > bestMatch.depth) bestMatch = match;
+    });
+    return bestMatch.route;
+  }
 }
 
 module.exports = Router;
