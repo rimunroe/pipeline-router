@@ -1,50 +1,62 @@
-function Router(){
-  this.createRoute = function(options /*, children */){
-    var route = {};
-    route.path = (options.path == null) ? '/' : options.path;
-    route.name = options.name;
-    route.callback = options.callback;
+var util = require('util');
 
-    function isParam(segment){
-      return segment[0] === ':';
-    }
+function Router() {
+  this._routes = {};
+  var that = this;
 
-    function getParams(path){
-      var segments = path.split('/');
-      // var segments = (splitPath.indexOf('/') > 0) ? splitPath.slice(1, splitPath.length) : splitPath;
-
-      var i;
-      var positions = {};
-      for(i = 0; i < segments.length; i++){
-        var segment = segments[i];
-
-        if (segment[0] === ':') {
-          positions[segment.slice(1, segment.length)] = i;
-        }
-      }
-      return positions;
-    }
-
-    route.params = getParams(route.path);
-
-    var routes = [route];
-    var i;
-
-    for(i = 1; i < arguments.length; i++){
-      var childRoutesBundle = arguments[i];
-
-      var j;
-      for(j = 0; j < childRoutesBundle.length; j++){
-        var childRoute = childRoutesBundle[j];
-        childRoute.path = route.path + ((route.path !== '/') ? '/' : '') + childRoute.path;
-        childRoute.params = getParams(childRoute.path);
-        routes.push(childRoute);
-      }
-    }
-
-    return routes;
+  function _register(route) {
+    that._routes[route.fullPath] = route;
   }
 
+  function _getParams(path) {
+    var segments = path.split('/');
+    var positions = {};
+
+    var i;
+    for (i = 0; i < segments.length; i++) {
+      var segment = segments[i];
+
+      if (segment[0] === ':') {
+        positions[segment.slice(1, segment.length)] = i;
+      }
+    }
+    return positions;
+  }
+
+  function _fillOutPath(route, parentPath) {
+    route.fullPath = parentPath + ((route.path !== '/') ? '/' : '') + route.path;
+    route.params = _getParams(route.fullPath);
+    _register(route);
+  }
+
+  function _fillOutChildPaths(route, parentPath) {
+    route.children.forEach(function(child) {
+      _fillOutPath(child, parentPath);
+      if (child.children.length !== 0) _fillOutChildPaths(child, child.fullPath);
+    })
+  }
+
+
+  this.Route = function(options /*, children */) {
+    this.path = (options.path == null) ? '/' : options.path;
+    this.fullPath = options.path;
+    this.name = options.name;
+    this.callback = options.callback;
+    this.children = [];
+
+    var isRoot = options.path === '/';
+
+    var i;
+    for (i = 1; i < arguments.length; i++) {
+      var child = arguments[i];
+      this.children.push(child);
+    }
+
+    if (isRoot) {
+      _fillOutPath(this, '');
+      _fillOutChildPaths(this, '');
+    }
+  }
 }
 
 module.exports = Router;
