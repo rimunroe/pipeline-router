@@ -39,6 +39,7 @@ function Router() {
 
   this.Route = function(options /*, children */) {
     this.path = (options.path == null) ? '/' : options.path;
+    this.pattern = (options.pattern == null) ? RegExp(this.path) : options.pattern ;
     this.fullPath = options.path;
     this.name = options.name;
     this.callback = options.callback;
