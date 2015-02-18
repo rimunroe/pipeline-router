@@ -94,6 +94,19 @@ function Router() {
     });
     return bestMatch.route;
   }
+
+  this.hitRoute = function(path){
+    var route = this.findRoute(path);
+    var segments = path.split('/');
+
+    var params = {};
+
+    for (var _param in route.params) {
+      params[_param.name] = segments[_param.position];
+    }
+
+    route.callback.call(null, path, params);
+  }
 }
 
 module.exports = Router;
