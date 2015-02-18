@@ -84,7 +84,7 @@ function Router() {
     return matches;
   }
 
-  this.matchRoute = function(path){
+  this.findRoute = function(path){
     var segments = path.split('/');
     segments[0] = '/';
     var matches = matchSegments(segments, this._routes['/'], 0);
