@@ -62,6 +62,14 @@ function Router() {
       _fillOutPath(this, '');
       _fillOutChildPaths(this, '');
     }
+
+    this.makePath = function(params){
+      segments = this.fullPath.split('/');
+      for (var name in this.params) {
+        segments[this.params[name]] = params[name];
+      }
+      return segments.join('/');
+    }
   }
 
   function matchSegments(segments, route, depth){
@@ -95,6 +103,21 @@ function Router() {
     return bestMatch.route;
   }
 
+  function matchName(route, name){
+    if (route.name === name) return route;
+
+    var i;
+    for (var i = 0; i < route.children.length; i++) {
+      var match = matchName(route.children[i], name);
+      if (match != null) return match;
+    }
+    return false;
+  }
+
+  this.findRouteByName = function(name){
+    return matchName(this._routes['/'], name);
+  }
+
   this.hitRoute = function(path){
     var route = this.findRouteByPath(path);
     var segments = path.split('/');
@@ -106,6 +129,11 @@ function Router() {
     }
 
     route.callback.call(null, path, params);
+  }
+
+  this.makeRouteIntoPath = function(page, params){
+    var route = this.findRouteByName(page);
+    return route.makePath(params);
   }
 }
 
