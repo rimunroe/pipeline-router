@@ -39,7 +39,12 @@ function Router() {
 
   this.Route = function(options /*, children */) {
     this.path = (options.path == null) ? '/' : options.path;
-    this.pattern = (options.pattern == null) ? RegExp(this.path) : options.pattern ;
+    if (options.dynamic === true) {
+      this.pattern = (options.pattern != null) ? options.pattern : /[a-zA-Z0-9]+/;
+    } else {
+      this.pattern = (options.pattern != null) ? options.pattern : RegExp(this.path);
+    }
+    // this.pattern = (options.pattern == null) ? RegExp(this.path) : options.pattern;
     this.fullPath = options.path;
     this.name = options.name;
     this.callback = options.callback;
@@ -83,10 +88,7 @@ function Router() {
     var segments = path.split('/');
     segments[0] = '/';
     var matches = matchSegments(segments, this._routes['/'], 0);
-    var bestMatch = {
-      route: this._routes['/'],
-      depth: 0
-    };
+    var bestMatch = matches[0];
     matches.forEach(function(match){
       if (match.depth > bestMatch.depth) bestMatch = match;
     });
