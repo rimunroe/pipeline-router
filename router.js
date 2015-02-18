@@ -3,7 +3,7 @@ function Router(){
     var route = {};
     route.path = (options.path == null) ? '/' : options.path;
     route.name = options.name;
-    route.handler = options.handler;
+    route.callback = options.callback;
 
     function isParam(segment){
       return segment[0] === ':';
