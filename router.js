@@ -38,7 +38,7 @@ function Router() {
   this.Route = function(options /*, children */) {
     this.path = (options.path == null) ? '/' : options.path;
     if (options.dynamic === true) {
-      this.pattern = (options.pattern != null) ? options.pattern : /[a-zA-Z0-9]+/;
+      this.pattern = (options.pattern != null) ? options.pattern : /[a-zA-Z0-9\+\(\)\-\_]+/;
     } else {
       this.pattern = (options.pattern != null) ? options.pattern : RegExp(this.path);
     }
