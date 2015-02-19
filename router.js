@@ -4,11 +4,11 @@ function Router() {
   this._routes = {};
   var that = this;
 
-  function _register(route) {
+  var _register = function(route) {
     that._routes[route.fullPath] = route;
-  }
+  };
 
-  function _getParams(path) {
+  var _getParams = function(path) {
     var segments = path.split('/');
     var positions = {};
 
@@ -21,23 +21,23 @@ function Router() {
       }
     }
     return positions;
-  }
+  };
 
-  function _fillOutPath(route, parentPath) {
+  var _fillOutPath = function(route, parentPath) {
     route.fullPath = parentPath + ((route.path !== '/') ? '/' : '') + route.path;
     route.params = _getParams(route.fullPath);
     _register(route);
-  }
+  };
 
-  function _fillOutChildPaths(route, parentPath) {
+  var _fillOutChildPaths = function(route, parentPath) {
     route.children.forEach(function(child) {
       _fillOutPath(child, parentPath);
       if (child.children.length !== 0) _fillOutChildPaths(child, child.fullPath);
     });
-  }
+  };
 
 
-  this.Route = function(options /*, children */) {
+  this.Route = function Route(options /*, children */) {
     this.path = (options.path == null) ? '/' : options.path;
     if (options.dynamic === true) {
       this.pattern = (options.pattern != null) ? options.pattern : /[a-zA-Z0-9\+\(\)\-\_]+/;
@@ -72,7 +72,7 @@ function Router() {
     };
   };
 
-  function matchSegments(segments, route, depth){
+  var matchSegments = function(segments, route, depth){
     var matches = [];
     if (route.pattern.test(segments[0])) {
       matches.push({
@@ -90,7 +90,7 @@ function Router() {
     });
 
     return matches;
-  }
+  };
 
   this.findRouteByPath = function(path){
     var segments = path.split('/');
@@ -103,7 +103,7 @@ function Router() {
     return bestMatch.route;
   };
 
-  function matchName(route, name){
+  var matchName = function(route, name){
     if (route.name === name) return route;
 
     var i;
@@ -112,7 +112,7 @@ function Router() {
       if (match != null) return match;
     }
     return false;
-  }
+  };
 
   this.findRouteByName = function(name){
     return matchName(this._routes['/'], name);
