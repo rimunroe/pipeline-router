@@ -1,5 +1,3 @@
-var util = require('util');
-
 function Router() {
   this._routes = {};
   var that = this;
