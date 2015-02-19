@@ -44,7 +44,7 @@ function Router() {
     } else {
       this.pattern = (options.pattern != null) ? options.pattern : new RegExp(this.path);
     }
-    // this.pattern = (options.pattern == null) ? RegExp(this.path) : options.pattern;
+
     this.fullPath = options.path;
     this.name = options.name;
     this.callback = options.callback;
