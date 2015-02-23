@@ -125,7 +125,7 @@ function Router() {
     var params = {};
 
     for (var _param in route.params) {
-      params[_param.name] = segments[_param.position];
+      params[_param] = segments[route.params[_param]];
     }
 
     route.handler.call(null, route.name, params, path);
