@@ -4,6 +4,10 @@ function Router() {
   this._routes = {};
   var that = this;
 
+  var _removeTrailingSlash = function(str){
+    return ((str.length > 1) && (str[str.length - 1] === '/')) ? str.slice(0, str.length -1) : str;
+  };
+
   var _register = function(route) {
     that._routes[route.fullPath] = route;
   };
@@ -23,21 +27,7 @@ function Router() {
     return positions;
   };
 
-  var _fillOutPath = function(route, parentPath) {
-    route.fullPath = parentPath + ((route.path !== '/') ? '/' : '') + route.path;
-    route.params = _getParams(route.fullPath);
-    _register(route);
-  };
-
-  var _fillOutChildPaths = function(route, parentPath) {
-    route.children.forEach(function(child) {
-      _fillOutPath(child, parentPath);
-      if (child.children.length !== 0) _fillOutChildPaths(child, child.fullPath);
-    });
-  };
-
-
-  this.Route = function Route(options /*, children */) {
+  this.Route = function Route(options, parentPath) {
     this.path = (options.path == null) ? '/' : options.path;
     if (options.dynamic === true) {
       this.pattern = (options.pattern != null) ? options.pattern : /[a-zA-Z0-9\+\(\)\-\_]+/;
@@ -45,23 +35,26 @@ function Router() {
       this.pattern = (options.pattern != null) ? options.pattern : new RegExp(this.path);
     }
 
-    this.fullPath = options.path;
+    var isRoot = (this.path === '/') || (parentPath == null);
+    if (isRoot) {
+      this.fullPath = '/';
+    } else {
+      var separator = (parentPath === '/') ? '' : '/';
+      this.fullPath = parentPath + separator + this.path;
+    }
     this.name = options.name;
-    this.callback = options.callback;
+    this.handler = options.handler;
     this.children = [];
 
-    var isRoot = options.path === '/';
+    var self = this;
 
-    var i;
-    for (i = 1; i < arguments.length; i++) {
-      var child = arguments[i];
-      this.children.push(child);
+    if (Array.isArray(options.children)) {
+      options.children.forEach(function(child){
+        self.children.push(new Route(child, self.fullPath));
+      });
     }
 
-    if (isRoot) {
-      _fillOutPath(this, '');
-      _fillOutChildPaths(this, '');
-    }
+    this.params = _getParams(this.fullPath);
 
     this.makePath = function(params){
       var segments = this.fullPath.split('/');
@@ -70,6 +63,8 @@ function Router() {
       }
       return segments.join('/');
     };
+
+    that._routes[this.fullPath] = this;
   };
 
   var matchSegments = function(segments, route, depth){
@@ -93,8 +88,13 @@ function Router() {
   };
 
   this.findRouteByPath = function(path){
-    var segments = path.split('/');
-    segments[0] = '/';
+    var segments;
+
+    if (path !== '/') {
+      segments = path.split('/');
+      segments[0] = '/';
+    } else segments = [path];
+
     var matches = matchSegments(segments, this._routes['/'], 0);
     var bestMatch = matches[0];
     matches.forEach(function(match){
@@ -128,13 +128,28 @@ function Router() {
       params[_param.name] = segments[_param.position];
     }
 
-    route.callback.call(null, route.name, params, path);
+    route.handler.call(null, route.name, params, path);
   };
 
   this.makeRouteIntoPath = function(page, params){
     var route = this.findRouteByName(page);
     return route.makePath(params);
   };
+
+  var _onpopstate = function(e){
+    that.hitRoute(window.location.pathname);
+  };
+
+  var _onload = function(e){
+    that.hitRoute(window.location.pathname);
+  };
+
+  this.start = function(){
+    window.addEventListener('popstate', _onpopstate);
+    window.addEventListener('load', _onload);
+    this.hitRoute(window.location.pathname);
+  };
+
 }
 
 module.exports = Router;
