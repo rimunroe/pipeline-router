@@ -136,6 +136,10 @@ function Router() {
     return route.makePath(params);
   };
 
+  this.areEquivalentPaths = function(pathA, pathB){
+    return _removeTrailingSlash(pathA) === _removeTrailingSlash(pathB);
+  };
+
   var _onpopstate = function(e){
     that.hitRoute(window.location.pathname);
   };
