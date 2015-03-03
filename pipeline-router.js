@@ -57,6 +57,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var creator = __webpack_require__(1);
 
 	module.exports = {
+	  name: 'pipeline-router',
 	  factories: {
 	    router: creator
 	  },

@@ -1,6 +1,7 @@
 var creator = require('./creator');
 
 module.exports = {
+  name: 'pipeline-router',
   factories: {
     router: creator
   },
