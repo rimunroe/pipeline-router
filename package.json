@@ -1,5 +1,5 @@
 {
-  "name": "pipeline-router",
+  "name": "pipeline-routing",
   "version": "0.1.0",
   "description": "A small router to be used with pipeline.",
   "main": "pipeline-router.js",
