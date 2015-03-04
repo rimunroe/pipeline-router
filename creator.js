@@ -10,17 +10,16 @@ module.exports = function (_app){
     var storeName = 'location';
     var storeOptions = {
       actions: {
-        navigate: function(payload){
-          this.update(payload);
+        navigate: function(page, params){
+          this.update({page: page, params: params});
         }
       }
     };
 
     var actionName = 'navigate';
-    var actionPackager = function(page, params){
+    var actionValidator = function(page, params){
       return {
-        page: page,
-        params: params
+        page: page != null
       };
     };
 
@@ -49,7 +48,7 @@ module.exports = function (_app){
       if (options.defaults.action != null) {
         if (options.defaults.action !== false) {
           if (options.defaults.action.name != null) actionName = options.defaults.action.name;
-          if (options.defaults.action.packager != null) actionPackager = options.defaults.action.packager;
+          if (options.defaults.action.validator != null) actionValidator = options.defaults.action.validator;
         } else shouldCreate.action = false;
       }
 
@@ -68,7 +67,7 @@ module.exports = function (_app){
       }
     }
 
-    if (shouldCreate.action) _app.create.action(actionName, actionPackager);
+    if (shouldCreate.action) _app.create.action(actionName, actionValidator);
     if (shouldCreate.store) _app.create.store(storeName, storeOptions);
     if (shouldCreate.adapter) _app.create.adapter(adapterName, adapterOptions);
 
