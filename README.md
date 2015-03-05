@@ -80,6 +80,38 @@ app.start();
 
 ```
 
+## Defaults
+
+Creating a router is done by invoking `app.create.router(options)`. `options` is an object with the following structure:
+
+```javascript
+{
+  routes: {/*...*/},
+
+  defaults: {
+    action: {
+      name: 'navigate',
+      validator: function(page, params){}
+    },
+
+    store: {
+      name: 'location',
+      actions: {
+        navigate: function(page, params){}
+    },
+
+    adapter: {
+      name: 'router',
+      stores: {
+        location: function(){}
+      }
+    }
+  }
+}
+```
+
+All defaults are optional.
+
 ## Installation
 
 `npm install pipeline-routing`
