@@ -2,7 +2,7 @@
 
 A simple router to be used with [Pipeline](https://github.com/rimunroe/pipeline).
 
-## Declaring routes
+## Defining routes
 
 A route is defined through an object with the following structure:
 
@@ -30,8 +30,6 @@ This is the path, relative to the parent, this route will be found.
 ### pattern (optional)
 
 A regular expression used to test whether or not a URL matches the current route.
-
-Defaults to
 
 ### dynamic (optional)
 
