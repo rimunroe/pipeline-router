@@ -83,25 +83,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var storeName = 'location';
 	    var storeOptions = {
 	      actions: {
-	        navigate: function(payload){
-	          this.update(payload);
+	        navigate: function(page, params){
+	          this.update({page: page, params: params});
 	        }
 	      }
 	    };
 
 	    var actionName = 'navigate';
-	    var actionPackager = function(page, params){
-	      return {
-	        page: page,
-	        params: params
-	      };
+	    var actionValidator = function(page, params){
+	      this.require((page != null), 'You must pass a "page" argument to "navigate"');
 	    };
 
 	    var adapterName = 'router';
 	    var adapterOptions = {
 	      stores: {
 	        location: function(){
-	          var location = _app.stores.location.get();
+	          var location = this.stores.location.get();
 	          var newPath = _app.router.makeRouteIntoPath(location.page, location.params);
 	          var oldPath = window.location.pathname;
 
@@ -122,7 +119,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      if (options.defaults.action != null) {
 	        if (options.defaults.action !== false) {
 	          if (options.defaults.action.name != null) actionName = options.defaults.action.name;
-	          if (options.defaults.action.packager != null) actionPackager = options.defaults.action.packager;
+	          if (options.defaults.action.validator != null) actionValidator = options.defaults.action.validator;
 	        } else shouldCreate.action = false;
 	      }
 
@@ -141,7 +138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    }
 
-	    if (shouldCreate.action) _app.create.action(actionName, actionPackager);
+	    if (shouldCreate.action) _app.create.action(actionName, actionValidator);
 	    if (shouldCreate.store) _app.create.store(storeName, storeOptions);
 	    if (shouldCreate.adapter) _app.create.adapter(adapterName, adapterOptions);
 
