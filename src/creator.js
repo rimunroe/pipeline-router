@@ -18,16 +18,14 @@ module.exports = function (_app){
 
     var actionName = 'navigate';
     var actionValidator = function(page, params){
-      return {
-        page: page != null
-      };
+      this.require((page != null), 'You must pass a "page" argument to "navigate"');
     };
 
     var adapterName = 'router';
     var adapterOptions = {
       stores: {
         location: function(){
-          var location = _app.stores.location.get();
+          var location = this.stores.location.get();
           var newPath = _app.router.makeRouteIntoPath(location.page, location.params);
           var oldPath = window.location.pathname;
 
