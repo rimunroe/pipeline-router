@@ -1,6 +1,6 @@
 {
   "name": "pipeline-routing",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "A small router to be used with pipeline.",
   "main": "pipeline-routing.js",
   "repository": {
