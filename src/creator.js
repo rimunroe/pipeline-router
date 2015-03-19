@@ -71,13 +71,13 @@ module.exports = function (_app){
 
 
     var applyDefaultsToRoutes = function(routeDef){
-      if (!_.isFunction(routeDef.handler)) {
-        if ((options.defaults != null) && (_.isFunction(options.defaults.handler))) {
+      if (typeof routeDef !== 'function') {
+        if ((options.defaults != null) && (typeof options.defaults.handler === 'function')) {
           routeDef.handler = options.defaults.handler;
         }
         else routeDef.handler = _app.actions.navigate;
       }
-      _.forEach(routeDef.children, applyDefaultsToRoutes);
+      if (routeDef.children != undefined) routeDef.children.forEach(applyDefaultsToRoutes);
     };
 
     applyDefaultsToRoutes(routes);
