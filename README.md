@@ -23,7 +23,7 @@ The name is a string, and must be unique among all route names.
 
 ### path
 
-This is the path, relative to the parent, this route will be found.
+This is the route's path, relative to the parent.
 
 *Note*: The only path where a forward slash can appear is the root.
 
