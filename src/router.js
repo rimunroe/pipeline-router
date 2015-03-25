@@ -132,7 +132,8 @@ function Router() {
   };
 
   this.makeRouteIntoPath = function(page, params){
-    var route = this.findRouteByName(page);
+    var matchedRoute = this.findRouteByName(page);
+    var route = matchedRoute !== false ? matchedRoute : this._routes['/'];
     return route.makePath(params);
   };
 
