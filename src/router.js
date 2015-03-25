@@ -28,7 +28,21 @@ function Router() {
   };
 
   this.Route = function Route(options, parentPath) {
-    this.path = (options.path == null) ? '/' : options.path;
+    if (options.path == null) {
+      if (options.name != null && parentPath != null) {
+        this.path = options.name;
+        this.name = options.name;
+      } else if (parentPath == null) {
+        this.path = '/';
+        this.name = options.name != null ? options.name : 'root';
+      } else throw new Error("non-root routes must be given a name and/or a path");
+    } else if (options.path != null && options.name == null) {
+      this.path = options.path;
+      this.name = options.path === '/' ? 'root' : options.path;
+    } else if (options.path != null && options.name != null) {
+      this.path = options.path;
+      this.name = options.name;
+    }
 
     this.dynamic = options.dynamic != null ? options.dynamic : this.path.indexOf(':') !== -1;
 
@@ -45,7 +59,7 @@ function Router() {
       var separator = (parentPath === '/') ? '' : '/';
       this.fullPath = parentPath + separator + this.path;
     }
-    this.name = options.name;
+
     this.handler = options.handler;
     this.children = [];
 
