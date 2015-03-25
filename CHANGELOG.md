@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.2 - 2015-03-25
+
+- Testing npm registry
+
 ## 0.2.1 - 2015-03-25
 
 - Router no longer errors when an exact match for a route couldn't be found
