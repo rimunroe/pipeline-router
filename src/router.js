@@ -29,6 +29,9 @@ function Router() {
 
   this.Route = function Route(options, parentPath) {
     this.path = (options.path == null) ? '/' : options.path;
+
+    this.dynamic = options.dynamic != null ? options.dynamic : this.path.indexOf(':') !== -1;
+
     if (options.dynamic === true) {
       this.pattern = (options.pattern != null) ? options.pattern : /[a-zA-Z0-9\+\(\)\-\_]+/;
     } else {
